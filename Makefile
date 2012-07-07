@@ -10,13 +10,13 @@ OBJS = \
 	$E
 
 hcalc : $(OBJS)
-	gcc -o $@ $^ -L/usr/X11R6/lib -lXpm -lX11
+	gcc -o $@ $^ -L/usr/X11/lib -lXpm -lX11
 
 clean :
 	-rm -f *.o *.d *~ \#* hcalc core
 
 tar :
-	tar cvfz distrib.tar.gz *.c *.h Makefile *.xpm
+	tar cvfz hcalc.tar.gz *.c *.h Makefile *.xpm README
 
 D=$(wildcard *.d)
 ifneq ($D,)

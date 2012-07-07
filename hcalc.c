@@ -1,6 +1,8 @@
 /* Copyright 1998 DJ Delorie <dj@delorie.com>
    Distributed under the terms of the GNU GPL
    http://www.delorie.com/store/hcalc/
+   Revisions copyright 2007, 
+   Theodore Kilgore <kilgota@auburn.edu>
 */
 #include "hcalc.h"
 

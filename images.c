@@ -1,6 +1,8 @@
 /* Copyright 1998 DJ Delorie <dj@delorie.com>
    Distributed under the terms of the GNU GPL
    http://www.delorie.com/store/hcalc/
+   Revisions copyright 2007,  
+   Theodore Kilgore <kilgota@auburn.edu>
 */
 #include "hcalc.h"
 #include <X11/xpm.h>
@@ -33,6 +35,6 @@ load_pixmaps()
     char_to_x[i] = 0;
     for (c=0; charmap[c]; c++)
       if (charmap[c] == i)
-	char_to_x[i] = c*6;
+	char_to_x[i] = c*12; /* Creates spacing on the output. */
   }
 }

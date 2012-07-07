@@ -1,21 +1,24 @@
 /* Copyright 1998 DJ Delorie <dj@delorie.com>
    Distributed under the terms of the GNU GPL
    http://www.delorie.com/store/hcalc/
+   Revisions copyright 2007, 
+   Theodore Kilgore <kilgota@auburn.edu>
 */
 #include "hcalc.h"
+#include <string.h>
 
-static char shown_offsets[15];
+static unsigned char shown_offsets[15];
 static int shown_bitmask;
 static int show_bits;
 
-#define CHARS_LEFT	6
-#define CHARS_TOP	6
+#define CHARS_LEFT	12 
+#define CHARS_TOP	12 
 
-#define BITS_LEFT_X	92
-#define BITS_TOP_1	6
-#define BITS_BOT_1	10
-#define BITS_TOP_0	10
-#define BITS_BOT_0	12
+#define BITS_LEFT_X	184 
+#define BITS_TOP_1	12  
+#define BITS_BOT_1	20  
+#define BITS_TOP_0	20  
+#define BITS_BOT_0	24  
 
 void
 redraw_chars()
@@ -24,9 +27,11 @@ redraw_chars()
   for (i=0; i<15; i++)
   {
     XCopyArea(display, chars, window, gc,
-	      shown_offsets[i], 0, 5, 7,
-	      CHARS_LEFT+6*i, CHARS_TOP);
-  }
+    	      shown_offsets[i], 0, 10, 14,
+	      CHARS_LEFT+12*i, CHARS_TOP);
+	/*    printf("i=%i\n",i); */
+	/*    printf("shown_offsets[%i]=%i\n", i, shown_offsets[i]); */
+   }
 }
 
 void
@@ -40,14 +45,14 @@ redraw()
     XSetForeground(display, gc, bit_off);
     for (i=0; i<32; i++)
     {
-      x = BITS_LEFT_X - 2*i - 3*(i/4);
+      x = BITS_LEFT_X - 4*i - 6*(i/4);
       if (!(shown_bitmask & (1<<i)))
-	XDrawLine(display, window, gc, x, BITS_TOP_0, x, BITS_BOT_0);
+        XDrawLine(display, window, gc, x, BITS_TOP_0, x, BITS_BOT_0);
     }
     XSetForeground(display, gc, bit_on);
     for (i=0; i<32; i++)
     {
-      x = BITS_LEFT_X - 2*i - 3*(i/4);
+      x = BITS_LEFT_X - 4*i - 6*(i/4);
       if (shown_bitmask & (1<<i))
 	XDrawLine(display, window, gc, x, BITS_TOP_1, x, BITS_BOT_1);
     }
@@ -90,25 +95,25 @@ send_current_display()
   {
     for (i=31; i>0; i--)
       if (shown_bitmask & (1<<i))
-	break;
+        break;
     for (; i>=0; i--)
     {
       if (shown_bitmask & (1<<i))
-	*tp++ = '1';
+    	*tp++ = '1';
       else
-	*tp++ = '0';
+        *tp++ = '0';
     }
   }
   else
   {
     for (i=0; i<15; i++)
     {
-      char c = charmap[shown_offsets[i]/6];
+      char c = charmap[shown_offsets[i]/12];
       if (c != ' ' && c != ',')
-	*tp++ = c;
+        *tp++ = c;
     }
   }
-
+        
   *tp = 0;
 
   e.type = SelectionNotify;
@@ -126,8 +131,7 @@ send_current_display()
   else
   {
     XChangeProperty(display, e.xselection.requestor, e.xselection.property,
-		    XA_STRING, 8, PropModeReplace, tmp, strlen(tmp));
+        	    XA_STRING, 8, PropModeReplace, tmp, strlen(tmp));
   }
-
   XSendEvent(display, e.xselection.requestor, False, 0, &e);
 }

@@ -1,8 +1,11 @@
 /* Copyright 1998 DJ Delorie <dj@delorie.com>
    Distributed under the terms of the GNU GPL
    http://www.delorie.com/store/hcalc/
+   Revisions copyright 2007,  
+   Theodore Kilgore <kilgota@auburn.edu>
 */
 #include "hcalc.h"
+#include <stdlib.h>
 
 Display *display=0;
 int screen=0;
@@ -131,19 +134,24 @@ process_input()
       case ButtonPress:
 	button(event.xbutton.button, event.xbutton.x, event.xbutton.y);
 	break;
-
       case SelectionRequest:
 	send_current_display();
 	break;
-
       case SelectionNotify:
 	if (event.xselection.property == paste_atom)
 	{
 	  XGetTextProperty(display, window, &tprop, paste_atom);
 	  complete_paste(tprop.value, tprop.nitems);
-	}
+	} 
 	break;
+      }      
+      if (event.type == ClientMessage 
+    			&& event.xclient.data.l[0] == delete_atom)
+      {
+    	/* printf( "Shutting down now!!!\n"); */
+        break;
       }
     }
   }
+  XCloseDisplay(display);
 }

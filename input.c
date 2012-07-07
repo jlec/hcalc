@@ -5,6 +5,7 @@
 #include "hcalc.h"
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 char pending_op = 0;
 int making_number = 0;
@@ -179,7 +180,7 @@ end_number()
   case '^':
     value = (long long)saved ^ (long long)value;
     break;
-  case 'S':
+  case 'S':	/* Shift. Positive means <<, negative means >> */
     if (value < 0)
       value = (long long)saved >> (long long)(-value);
     else
@@ -207,7 +208,8 @@ void
 key(char c)
 {
   int v = c;
-  /* printf("key %c\n", c); */
+  /* printf("key_number 0x%x\n", v); */
+  /* printf("key %c\n", c); 	     */
 
   switch (c)
   {
@@ -285,7 +287,7 @@ key(char c)
     }
     break;
 
-  case '_': /* +/- */
+  case '_': /* The +/- key */
     if (making_number)
     {
       if (input_buf[0] == '-')
@@ -324,7 +326,7 @@ key(char c)
     show_value();
     break;
 
-  case 'x':
+  case 'x':	/* Allow 'x' on keyboard to be used to enter '*' */
     c = '*';
   case '+':
   case '-':
@@ -344,13 +346,14 @@ key(char c)
     end_number();
     break;
 
-  case '~':
+  case '~':	/* Invert bits (one's complement) */
     end_number();
     value = ~ (long long)value;
+    saved = value;
     show_value();
     break;
 
-  case '<':
+  case '<': /* SHL by one bit only */
 /* Modified by Keith Meehl to fix bit shift bug*/
     end_number();
     value = (long long)value << 1;
@@ -359,7 +362,7 @@ key(char c)
     show_value();
     break;
 
-  case '>':
+  case '>': /* SHR by one bit only */
 /* Modified by Keith Meehl to fix bit shift bug*/
     end_number();
     value = (long long)value >> 1;
@@ -384,19 +387,21 @@ key(char c)
 
   case 'P': /* click on the display itself */
     break;
+  case 'q':
+    exit(0);
   }
 }
 
 static char *bmap[] = {
-  "PPPP\033",
-  "DHOB\010",
-  "[]}<>",
-  "Sdef/",
-  "~abc*",
-  "|789-",
-  "&456+",
-  "^123=",
-  "u0._="
+  "PPPP\033", 	/* mouse copy and paste, CLR	*/
+  "DHOB\010", 	/* DEC, HEX, OCT, BIN, DEL	*/
+  "[]}<>",    	/* STO, RCL, SUM, <<, >>	*/
+  "Sdef/",    	/* SHF, D    E    F   /		*/
+  "~abc*",	/* INV, 			*/
+  "|789-",	/* OR, 				*/
+  "&456+",	/* AND, 			*/
+  "^123=",	/* XOR, 			*/
+  "u0._="	/* CE, 0,  . , +/-, =		*/
 };
 
 void
@@ -424,10 +429,10 @@ complete_paste(char *s, int n)
 void
 button(int b, int x, int y)
 {
-  x = (x-2)/24;
+  x = (x-2)/48;
   if (x < 0) x = 0;
   if (x > 4) x = 4;
-  y = (y-1)/16;
+  y = (y-1)/32;
   if (y < 0) y = 0;
   if (y > 8) y = 8;
 
@@ -440,4 +445,5 @@ button(int b, int x, int y)
     paste();
 
   key(bmap[y][x]);
+  /* printf("bmap[%i][%i] and b=%i\n", y, x, b); */
 }

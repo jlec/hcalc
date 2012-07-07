@@ -1,9 +1,10 @@
 /* Copyright 1998 DJ Delorie <dj@delorie.com>
    Distributed under the terms of the GNU GPL
    http://www.delorie.com/store/hcalc/
+   Revisions copyright 2007,  
+   Theodore Kilgore <kilgota@auburn.edu>
 */
 #include <stdio.h>
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -29,7 +30,8 @@ int bit_off;
 
 extern int char_to_x[256];
 extern char charmap[];
+
 #define MAXCHARS 15
 
-#define WIDTH 125
-#define HEIGHT 147
+#define WIDTH 250
+#define HEIGHT 294
